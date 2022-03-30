@@ -2,25 +2,33 @@
 
 const path = require('path');
 const { merge } = require('webpack-merge');
-const HtmlPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FaviconWebpackPlugin = require('favicons-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const BrotliWebpackPlugin = require('brotli-webpack-plugin');
 
 const base = {
   context: path.resolve('src'),
   entry: [
+    'bootstrap/dist/css/bootstrap.css',
     './index.jsx',
   ],
-  output: {
-    path: path.resolve('dist'),
-    filename: 'main.js',
-    publicPath: '/',
-  },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
   },
   module: {
     strictExportPresence: true,
     rules: [
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/,
+        type: 'asset/resource',
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
@@ -29,10 +37,24 @@ const base = {
           options: { sourceMap: true },
         }],
       },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: { sourceMap: true },
+          },
+        ],
+      },
     ],
   },
   plugins: [
-    new HtmlPlugin({ template: path.resolve('src/template.html') }),
+    new FaviconWebpackPlugin(path.resolve('favicon.png')),
+    new HtmlWebpackPlugin({
+      template: path.resolve('src/template.html'),
+      inject: 'head',
+    }),
     new MiniCssExtractPlugin(),
   ],
 };
@@ -42,7 +64,6 @@ const environments = {
     mode: 'development',
     devtool: 'eval-source-map',
     devServer: {
-      contentBase: path.resolve('dist'),
       historyApiFallback: true,
       open: true,
       proxy: {
@@ -56,9 +77,22 @@ const environments = {
 
   production: {
     mode: 'production',
+    output: {
+      path: path.resolve('dist'),
+      publicPath: '/',
+    },
+    plugins: [
+      new CleanWebpackPlugin({ path: path.resolve('dist') }),
+      new BrotliWebpackPlugin(),
+    ],
+    optimization: {
+      minimizer: [
+        new TerserWebpackPlugin(),
+      ],
+    },
   },
 };
 
-module.exports = function webpackConfig(env) {
-  return merge(base, environments[env] || environments.production);
+module.exports = function webpackConfig({ development }) {
+  return merge(base, environments[development ? 'development' : 'production']);
 };
