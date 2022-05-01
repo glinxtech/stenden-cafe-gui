@@ -12,13 +12,11 @@ function HomePage() {
       .then(data => {
         setProducts(data.map(({ category, ...product }) => product));
         setCategories([...new Map(data.map(prod => [prod.category.id, prod.category])).values()]);
-      })
-      .catch(err => console.log(err));
+      });
   }, []);
 
   return (
     <Container>
-      <h1>Home Page</h1>
       <Menu products={products} categories={categories} />
     </Container>
   );

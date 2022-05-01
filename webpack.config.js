@@ -68,7 +68,7 @@ const environments = {
       open: true,
       proxy: {
         '/api': {
-          target: 'http://172.18.160.1:5121/',
+          target: 'http://172.21.32.1:5121/',
           secure: false,
           changeOrigin: true,
         },

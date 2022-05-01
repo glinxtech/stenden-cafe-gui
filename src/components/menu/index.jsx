@@ -1,71 +1,77 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Tab,
   Row,
   Col,
   Nav,
-  ListGroup,
+  Table,
+  Button,
 } from 'react-bootstrap';
-import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import ProductList from './product-list';
+import { CartContext } from '../cart.provider';
 
-function TabContent(props) {
-  const { products, category } = props;
-
-  const productList = products
-    .filter(product => product.categoryId === category)
-    .map(product => (
-      <ListGroup.Item as="li">{product.name}</ListGroup.Item>
-    ));
+function Menu({ products, categories }) {
+  const cart = useContext(CartContext);
 
   return (
-    <ListGroup as="ul">{productList}</ListGroup>
-  );
-}
-
-TabContent.propTypes = {
-  products: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    categoryId: PropTypes.number,
-    price: PropTypes.number,
-  })).isRequired,
-  category: PropTypes.number.isRequired,
-};
-
-const StyledNav = styled(Nav)`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledCol = styled(Col)`
-  display: flex;
-  flex-direction: column;
-`;
-
-function Menu(props) {
-  const { products, categories } = props;
-  return (
-    <Tab.Container>
+    <Tab.Container defaultActiveKey={1}>
       <Row>
         <Col sm={3}>
-          <StyledNav variant="pills">
+          <Nav className="flex-column" variant="pills">
             {categories.map(cat => (
-              <Nav.Item>
+              <Nav.Item key={cat.id}>
                 <Nav.Link eventKey={cat.id}>{cat.name}</Nav.Link>
               </Nav.Item>
             ))}
-          </StyledNav>
+          </Nav>
         </Col>
-        <StyledCol sm={9}>
+        <Col className="flex-column">
           <Tab.Content>
             {categories.map(cat => (
-              <Tab.Pane eventKey={cat.id}>
-                <TabContent products={products} category={cat.id} />
+              <Tab.Pane key={cat.id} eventKey={cat.id}>
+                <ProductList products={products} category={cat.id} />
               </Tab.Pane>
             ))}
           </Tab.Content>
-        </StyledCol>
+        </Col>
+        <Col sm={5}>
+          <Table striped>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.items.map(item => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>
+                    {item.amount > 1
+                      ? (
+                        <Button onClick={() => cart.setAmount(item.id, (item.amount - 1))}>
+                          <FontAwesomeIcon icon={faMinus} />
+                        </Button>
+                      )
+                      : (
+                        <Button onClick={() => cart.remove(item.id)}>
+                          <FontAwesomeIcon icon={faTrash} />
+                        </Button>
+                      )}
+                    {item.amount}
+                    <Button onClick={() => cart.setAmount(item.id, (item.amount + 1))}>
+                      <FontAwesomeIcon icon={faPlus} />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Button>Order</Button>
+        </Col>
       </Row>
     </Tab.Container>
   );
