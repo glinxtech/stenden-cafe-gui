@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
+import apiClient from '../api-client';
 import Menu from '../components/menu';
 
 function HomePage() {
@@ -7,12 +8,12 @@ function HomePage() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch('/api/product')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data.map(({ category, ...product }) => product));
-        setCategories([...new Map(data.map(prod => [prod.category.id, prod.category])).values()]);
-      });
+    apiClient.get('/product').then(resProducts => {
+      setProducts(resProducts.map(({ category, ...product }) => product));
+      setCategories([
+        ...new Map(resProducts.map(prod => [prod.category.id, prod.category])).values(),
+      ]);
+    });
   }, []);
 
   return (

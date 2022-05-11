@@ -1,76 +1,40 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Tab,
   Row,
   Col,
-  Nav,
-  Table,
   Button,
+  ListGroup,
 } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import Cart from '../cart';
 import ProductList from './product-list';
-import { CartContext } from '../cart.provider';
 
 function Menu({ products, categories }) {
-  const cart = useContext(CartContext);
-
   return (
-    <Tab.Container defaultActiveKey={1}>
+    <Tab.Container defaultActiveKey="#1">
       <Row>
         <Col sm={3}>
-          <Nav className="flex-column" variant="pills">
+          <ListGroup>
             {categories.map(cat => (
-              <Nav.Item key={cat.id}>
-                <Nav.Link eventKey={cat.id}>{cat.name}</Nav.Link>
-              </Nav.Item>
+              <ListGroup.Item key={cat.id} href={`#${cat.id}`}>
+                {cat.name}
+              </ListGroup.Item>
             ))}
-          </Nav>
+          </ListGroup>
         </Col>
         <Col className="flex-column">
           <Tab.Content>
             {categories.map(cat => (
-              <Tab.Pane key={cat.id} eventKey={cat.id}>
+              <Tab.Pane key={cat.id} eventKey={`#${cat.id}`}>
                 <ProductList products={products} category={cat.id} />
               </Tab.Pane>
             ))}
           </Tab.Content>
         </Col>
         <Col sm={5}>
-          <Table striped>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.items.map(item => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>
-                    {item.amount > 1
-                      ? (
-                        <Button onClick={() => cart.setAmount(item.id, (item.amount - 1))}>
-                          <FontAwesomeIcon icon={faMinus} />
-                        </Button>
-                      )
-                      : (
-                        <Button onClick={() => cart.remove(item.id)}>
-                          <FontAwesomeIcon icon={faTrash} />
-                        </Button>
-                      )}
-                    {item.amount}
-                    <Button onClick={() => cart.setAmount(item.id, (item.amount + 1))}>
-                      <FontAwesomeIcon icon={faPlus} />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          <Button>Order</Button>
+          <Cart simple />
+          <Button href="/cart">Order</Button>
         </Col>
       </Row>
     </Tab.Container>

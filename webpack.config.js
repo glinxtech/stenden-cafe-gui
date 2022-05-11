@@ -12,6 +12,8 @@ const BrotliWebpackPlugin = require('brotli-webpack-plugin');
 const base = {
   context: path.resolve('src'),
   entry: [
+    'core-js/stable',
+    'regenerator-runtime/runtime',
     'bootstrap/dist/css/bootstrap.css',
     './index.jsx',
   ],

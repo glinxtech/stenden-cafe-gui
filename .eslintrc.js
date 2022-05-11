@@ -11,6 +11,7 @@ module.exports = {
     'arrow-parens': [2, 'as-needed'],
     'prefer-destructuring': 0,
     'react/jsx-props-no-spreading': 0,
+    'react/jsx-no-bind': 0,
   },
   overrides: [
     {
