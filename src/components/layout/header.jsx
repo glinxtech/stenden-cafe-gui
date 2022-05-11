@@ -24,7 +24,7 @@ function LayoutHeader() {
   return (
     <Navbar as="header" bg="light" variant="light">
       <Container fluid>
-        <StyledNavBrand href="">
+        <StyledNavBrand href="/">
           <Logo />
         </StyledNavBrand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
