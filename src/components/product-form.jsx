@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   InputGroup,
   Form,
+  Button,
   Row,
   Col,
 } from 'react-bootstrap';
@@ -13,35 +14,30 @@ function ProductForm({
   initialName,
   initialPrice,
   initialCategory,
-  initialLocation,
   onSubmit,
 }) {
   const [categories, setCategories] = useState(null);
-  const [locations, setLocations] = useState(null);
   const [isValidated, setIsValidated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    apiClient.get('/categories').then(setCategories);
-    apiClient.get('/locations').then(setLocations);
+    apiClient.get('/category').then(setCategories);
   }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const fd = new FormData(event.target);
-    const values = {
-      name: fd.get('name'),
-      price: fd.get('price'),
-      category: fd.get('category'),
-      location: fd.get('location'),
-    };
-
     if (!event.target.checkValidity()) setIsValidated(true);
     else {
       setIsSubmitting(true);
-      await onSubmit(values).finally(() => {
-        setIsSubmitting(false);
-      });
+      const fd = new FormData(event.target);
+      await onSubmit({
+        Name: fd.get('name'),
+        Price: fd.get('price'),
+        CategoryId: fd.get('category'),
+      })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
     }
   }
 
@@ -53,7 +49,7 @@ function ProductForm({
   return (
     <Form noValidate validated={isValidated} onSubmit={handleSubmit} onReset={onReset}>
       <Row>
-        <Form.Group as={Col} xs={12} md={6} controlId="product-name">
+        <Form.Group as={Col} xs={12} controlId="product-name">
           <FormLabel>Name</FormLabel>
           <Form.Control
             required
@@ -101,23 +97,14 @@ function ProductForm({
             ))}
           </Form.Select>
         </Form.Group>
+      </Row>
 
-        <Form.Group as={Col} xs={12} md={6} controlId="product-location">
-          <FormLabel>Location</FormLabel>
-          <Form.Select
-            required
-            name="location"
-            disabled={isSubmitting}
-            defaultValue={initialLocation}
-          >
-            <option>Select&hellip;</option>
-            {(locations || []).map(option => (
-              <option value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
+      <Row>
+        <Col xs={12}>
+          <Button type="submit" variant="success">
+            Submit
+          </Button>
+        </Col>
       </Row>
     </Form>
   );
@@ -127,7 +114,6 @@ ProductForm.propTypes = {
   initialName: PropTypes.string,
   initialPrice: PropTypes.number,
   initialCategory: PropTypes.number,
-  initialLocation: PropTypes.number,
   onSubmit: PropTypes.func.isRequired,
 };
 
@@ -135,7 +121,6 @@ ProductForm.defaultProps = {
   initialName: '',
   initialPrice: null,
   initialCategory: null,
-  initialLocation: null,
 };
 
 export default ProductForm;

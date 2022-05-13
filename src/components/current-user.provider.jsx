@@ -5,17 +5,13 @@ import apiClient from '../api-client';
 export const CurrentUserContext = createContext();
 
 function CurrentUserProvider({ children }) {
-  const [username, setUsername] = useState(localStorage.getItem('currentUsername'));
+  const [currentUsername, setUsername] = useState(localStorage.getItem('currentUsername'));
 
-  async function login({ user, password }) {
-    const authToken = await apiClient.post('/user/login', {
-      username: user,
-      password,
-    })
-      .then(res => res.token);
+  async function login(values) {
+    const authToken = await apiClient.post('/user/login', values).then(res => res.token);
     localStorage.setItem('authToken', authToken);
-    localStorage.setItem('currentUsername', user);
-    setUsername(user);
+    localStorage.setItem('currentUsername', values.username);
+    setUsername(values.username);
   }
 
   async function logout() {
@@ -26,10 +22,10 @@ function CurrentUserProvider({ children }) {
   return (
     <CurrentUserContext.Provider
       value={useMemo(() => ({
-        username: localStorage.getItem('authToken') && username,
+        username: localStorage.getItem('authToken') && currentUsername,
         login,
         logout,
-      }), [username])}
+      }), [currentUsername])}
     >
       {children}
     </CurrentUserContext.Provider>

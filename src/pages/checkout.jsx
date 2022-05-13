@@ -1,26 +1,16 @@
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
-  Button,
 } from 'react-bootstrap';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { CartContext } from '../components/cart.provider';
+import Stepper from '../components/stepper';
+import PaymentModal from '../components/payment-modal';
 
 const StyledTable = styled(Table)`
   td {
     vertical-align: middle;
-  }
-`;
-
-const Amount = styled.div`
-  display: flex;
-  align-items: center;
-  p {
-    margin-bottom: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
 `;
 
@@ -38,16 +28,34 @@ const Wrapper = styled.div`
 
 function CheckoutPage() {
   const cart = useContext(CartContext);
+  const navigate = useNavigate();
+
+  function pay() {
+    cart.pay();
+    if (cart.done()) {
+      cart.checkout();
+      navigate('/');
+    }
+  }
+
+  function total() {
+    return cart.items.reduce((prevItem, curItem) => prevItem + (curItem.price * curItem.toPay), 0)
+      .toLocaleString(undefined, {
+        style: 'currency',
+        currency: 'EUR',
+      });
+  }
 
   return (
     <Wrapper>
       <StyledTable striped>
         <thead>
           <tr>
-            <th><h3>Product</h3></th>
-            <th><h3>Amount</h3></th>
-            <th><h3>Price</h3></th>
-            <th><h3>Total</h3></th>
+            <th>Product</th>
+            <th>Amount to pay</th>
+            <th>Amount left</th>
+            <th>Price</th>
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -55,23 +63,14 @@ function CheckoutPage() {
             <tr key={item.id}>
               <td>{item.name}</td>
               <td>
-                <Amount>
-                  {item.amount > 1
-                    ? (
-                      <Button onClick={() => cart.setAmount(item.id, (item.amount - 1))}>
-                        <FontAwesomeIcon icon={faMinus} />
-                      </Button>
-                    )
-                    : (
-                      <Button onClick={() => cart.remove(item.id)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </Button>
-                    )}
-                  <p>{item.amount}</p>
-                  <Button onClick={() => cart.setAmount(item.id, (item.amount + 1))}>
-                    <FontAwesomeIcon icon={faPlus} />
-                  </Button>
-                </Amount>
+                <Stepper
+                  value={item.toPay}
+                  max={(item.amount - item.paid)}
+                  setValue={val => cart.setToPay(item.id, val)}
+                />
+              </td>
+              <td>
+                {item.amount - item.paid}
               </td>
               <td>
                 {item.price.toLocaleString(undefined, {
@@ -80,7 +79,7 @@ function CheckoutPage() {
                 })}
               </td>
               <td>
-                {(item.price * item.amount)
+                {(item.price * item.toPay)
                   .toLocaleString(undefined, {
                     style: 'currency',
                     currency: 'EUR',
@@ -88,8 +87,13 @@ function CheckoutPage() {
               </td>
             </tr>
           ))}
+          <tr>
+            <td colSpan="4">Total</td>
+            <td>{total()}</td>
+          </tr>
         </tbody>
       </StyledTable>
+      <PaymentModal total={total()} onConfirm={pay} />
     </Wrapper>
   );
 }

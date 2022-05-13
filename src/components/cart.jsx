@@ -28,6 +28,14 @@ const Amount = styled.div`
 function Cart({ simple }) {
   const cart = useContext(CartContext);
 
+  function total() {
+    return cart.items.reduce((prevItem, curItem) => prevItem + (curItem.price * curItem.amount), 0)
+      .toLocaleString(undefined, {
+        style: 'currency',
+        currency: 'EUR',
+      });
+  }
+
   return (
     <StyledTable striped>
       <thead>
@@ -86,6 +94,13 @@ function Cart({ simple }) {
             )}
           </tr>
         ))}
+        {!simple
+        && (
+          <tr>
+            <td colSpan="3">Total</td>
+            <td>{total()}</td>
+          </tr>
+        )}
       </tbody>
     </StyledTable>
   );

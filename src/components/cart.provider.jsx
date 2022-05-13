@@ -5,7 +5,7 @@ import React, {
   useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import apiClient from '../api-client';
+// import apiClient from '../api-client';
 
 export const CartContext = createContext();
 
@@ -13,12 +13,19 @@ function CartProvider({ children }) {
   const [items, setItems] = useState(JSON.parse(localStorage.getItem('cart')) || []);
 
   function add(item) {
-    setItems(prev => prev.concat({
-      ...item,
-      amount: 1,
-      paid: 0,
-      toPay: 0,
-    }));
+    if (items.some(i => i.id === item.id)) {
+      setItems(prev => prev.map(p => (p.id !== item.id ? p : {
+        ...p,
+        amount: p.amount + 1,
+      })));
+    } else {
+      setItems(prev => prev.concat({
+        ...item,
+        amount: 1,
+        paid: 0,
+        toPay: 0,
+      }));
+    }
   }
 
   function remove(itemId) {
@@ -36,21 +43,19 @@ function CartProvider({ children }) {
     setItems(prev => prev.map(p => (p.id !== itemId ? p : { ...p, toPay })));
   }
 
-  function setPaid(itemId, paid) {
-    setItems(prev => prev.map(p => (p.id !== itemId ? p : { ...p, paid })));
+  function done() {
+    return items.every(item => item.paid === item.amount);
   }
 
-  function Pay() {
-    const itemsToPay = items.reduce((filtered, item) => {
-      if (item.toPay > 0) filtered.push(item.id);
-      return filtered;
-    });
+  function pay() {
+    setItems(prev => prev.map(
+      p => (p.toPay === 0 ? p : { ...p, toPay: 0, paid: (p.paid + p.toPay) }),
+    ));
+  }
 
-    apiClient.get('/product', ) // PICKUP
-
-    setItems(prev => prev.map(p => (p.toPay === 0 ? p : { ...p, paid: (p.paid + p.toPay) })));
-    if (items.every(item => item.paid === item.amount)) {
-
+  function checkout() {
+    if (done()) {
+      setItems([]);
     }
   }
 
@@ -66,8 +71,9 @@ function CartProvider({ children }) {
         remove,
         setAmount,
         setToPay,
-        setPaid,
-        Pay,
+        done,
+        pay,
+        checkout,
       }), [items])}
     >
       {children}

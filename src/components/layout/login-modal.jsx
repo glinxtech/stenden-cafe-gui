@@ -31,6 +31,7 @@ function LoginModal() {
       username: fd.get('username'),
       password: fd.get('password'),
     };
+    console.log(values);
 
     if (!event.target.checkValidity()) setIsValidated(true);
     else {

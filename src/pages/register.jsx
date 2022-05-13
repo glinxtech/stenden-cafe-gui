@@ -33,6 +33,7 @@ const SuccessMessage = styled.div`
   > div {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     padding: 3.5rem;
     border-radius: 50%;
     background-color: #eaeaea;
@@ -41,7 +42,7 @@ const SuccessMessage = styled.div`
   .fa {
     width: 60%;
     margin-bottom: 1.5em;
-    color: #7ee778;
+    fill: #7ee778;
   }
 `;
 
@@ -67,17 +68,19 @@ function RegisterForm() {
     event.preventDefault();
     const fd = new FormData(event.target);
     const values = {
-      username: fd.get('username'),
+      username: fd.get('username').trim(),
+      location: fd.get('location').trim() || null,
       password: fd.get('password'),
       confirmPassword: fd.get('confirmPassword'),
     };
 
-    if (!event.target.checkValidity() || values.password === values.confirmPassword) {
+    if (!event.target.checkValidity() || values.password !== values.confirmPassword) {
       setValidated(true);
     } else {
       setIsSubmitting(true);
       await apiClient.post('/user', {
         username: values.username,
+        location: values.location,
         password: values.password,
       })
         .then(() => {
@@ -99,7 +102,7 @@ function RegisterForm() {
 
       <StyledForm noValidate validated={validated} onSubmit={onSubmit}>
         <Row>
-          <Form.Group as={Col} xs={12} controlId="username">
+          <Form.Group as={Col} xs={12} sm={6} controlId="username">
             <FormLabel>Username</FormLabel>
             <Form.Control
               required
@@ -110,6 +113,11 @@ function RegisterForm() {
             <Form.Control.Feedback type="invalid">
               Required
             </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group as={Col} xs={12} sm={6} controlId="location">
+            <FormLabel>Location</FormLabel>
+            <Form.Control name="location" type="text" disabled={isSubmitting} />
           </Form.Group>
 
           <Form.Group as={Col} xs={12} sm={6} controlId="password">

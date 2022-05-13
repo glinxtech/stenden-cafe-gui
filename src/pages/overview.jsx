@@ -31,7 +31,6 @@ function OverviewPage() {
       <Cart />
       <Options direction="horizontal">
         <Button href="/">Go Back</Button>
-        <Button>Pay All</Button>
         <Button href="/checkout">Pay Per Person</Button>
       </Options>
     </Wrapper>

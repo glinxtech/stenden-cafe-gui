@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import apiClient from '../api-client';
-import ProductForm from '../components/product-form';
-import Loading from '../components/loading';
+import apiClient from '../../api-client';
+import ProductForm from '../../components/product-form';
+import Loading from '../../components/loading';
 
 function UpdateProductPage() {
   const { productId } = useParams();
@@ -18,6 +18,10 @@ function UpdateProductPage() {
       setProductPrice(product.price);
     });
   }, []);
+
+  async function onSubmit(values) {
+    return apiClient.put(`/product/${productId}`, values);
+  }
 
   return (
     <Container>
@@ -34,6 +38,7 @@ function UpdateProductPage() {
           initialName={productName}
           initialCategory={productCategory}
           initialPrice={productPrice}
+          onSubmit={onSubmit}
         />
       ) : (
         <Loading />

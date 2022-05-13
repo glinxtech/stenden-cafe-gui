@@ -48,23 +48,22 @@ function LayoutHeader() {
   return (
     <Navbar as="header" bg="light" variant="light">
       <Container fluid>
-        <StyledNavBrand as={Link} to="/">
+        <StyledNavBrand href="/">
           <Logo />
         </StyledNavBrand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        {!isLoggedIn ? (
+        {isLoggedIn ? (
           <Collapse id="basic-navbar-nav">
             <LoggedInNav>
               <Nav.Item>
-                <StyledNavLink as={Link} to="/product/create">
-                  Create
+                <StyledNavLink href="/product">
+                  Products
                 </StyledNavLink>
               </Nav.Item>
               <Nav.Item>
-                <StyledNavLink as={Link} to="/product/:productId/update">Update</StyledNavLink>
-              </Nav.Item>
-              <Nav.Item>
-                <StyledNavLink href="">Delete</StyledNavLink>
+                <StyledNavLink href="/category">
+                  Categories
+                </StyledNavLink>
               </Nav.Item>
             </LoggedInNav>
             <Nav>
