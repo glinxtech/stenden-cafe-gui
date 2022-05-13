@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Table, Button, Container } from 'react-bootstrap';
-import { FaPencilAlt } from 'react-icons/fa';
+import { FaPencilAlt, FaPlus } from 'react-icons/fa';
 import apiClient from '../../api-client';
 import Loading from '../../components/loading';
 import DeleteCategoryButton from '../../components/delete-category-button';
@@ -13,6 +13,13 @@ const ControlsCell = styled.td`
   > a {
     margin-right: .8rem;
   }
+`;
+
+const Title = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem
 `;
 
 function CategoryListingPage() {
@@ -26,8 +33,12 @@ function CategoryListingPage() {
     <Loading />
   ) : (
     <Container>
-      <h1 className="h3">Categories</h1>
-
+      <Title>
+        <h1 className="h3">Categories</h1>
+        <Button as={Link} variant="info" to="/category/create">
+          <FaPlus />
+        </Button>
+      </Title>
       <Table striped bordered>
         <thead>
           <tr>

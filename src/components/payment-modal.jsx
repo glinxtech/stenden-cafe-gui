@@ -19,9 +19,7 @@ function PaymentModal({ total, onConfirm }) {
           <Modal.Title>Checkout</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Confirm Payment of
-          {' '}
-          {total}
+          Confirm Payment of {total}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Table,
@@ -30,14 +30,6 @@ function CheckoutPage() {
   const cart = useContext(CartContext);
   const navigate = useNavigate();
 
-  function pay() {
-    cart.pay();
-    if (cart.done()) {
-      cart.checkout();
-      navigate('/');
-    }
-  }
-
   function total() {
     return cart.items.reduce((prevItem, curItem) => prevItem + (curItem.price * curItem.toPay), 0)
       .toLocaleString(undefined, {
@@ -45,6 +37,13 @@ function CheckoutPage() {
         currency: 'EUR',
       });
   }
+
+  useEffect(() => {
+    if (cart.done()) {
+      cart.checkout();
+      navigate('/');
+    }
+  }, [cart.items]);
 
   return (
     <Wrapper>
@@ -93,7 +92,7 @@ function CheckoutPage() {
           </tr>
         </tbody>
       </StyledTable>
-      <PaymentModal total={total()} onConfirm={pay} />
+      <PaymentModal total={total()} onConfirm={cart.pay} />
     </Wrapper>
   );
 }

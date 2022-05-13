@@ -48,7 +48,7 @@ function LayoutHeader() {
   return (
     <Navbar as="header" bg="light" variant="light">
       <Container fluid>
-        <StyledNavBrand href="/">
+        <StyledNavBrand as={Link} to="/">
           <Logo />
         </StyledNavBrand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -56,12 +56,12 @@ function LayoutHeader() {
           <Collapse id="basic-navbar-nav">
             <LoggedInNav>
               <Nav.Item>
-                <StyledNavLink href="/product">
+                <StyledNavLink as={Link} to="/product">
                   Products
                 </StyledNavLink>
               </Nav.Item>
               <Nav.Item>
-                <StyledNavLink href="/category">
+                <StyledNavLink as={Link} to="/category">
                   Categories
                 </StyledNavLink>
               </Nav.Item>

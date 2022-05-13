@@ -18,11 +18,11 @@ function Pages() {
       <Route exact path="/" element={<HomePage />} />
       <Route exact path="/register" element={<RegisterPage />} />
       <Route exact path="/product" element={<ProductListingPage />} />
+      <Route exact path="/product/create" element={<CreateProductPage />} />
       <Route exact path="/product/:productId" element={<ProductUpdatePage />} />
-      <Route exact path="/create-product" element={<CreateProductPage />} />
       <Route exact path="/category" element={<CategoryListingPage />} />
+      <Route exact path="/category/create" element={<CreateCategoryPage />} />
       <Route exact path="/category/:categoryId" element={<CategoryUpdatePage />} />
-      <Route exact path="/create-category" element={<CreateCategoryPage />} />
       <Route exact path="/cart" element={<OverviewPage />} />
       <Route exact path="/checkout" element={<CheckoutPage />} />
       <Route path="*" element={<NotFoundPage />} />

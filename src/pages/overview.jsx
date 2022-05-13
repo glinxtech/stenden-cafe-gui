@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  Stack,
-} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import Cart from '../components/cart';
 
@@ -18,20 +15,19 @@ const Wrapper = styled.div`
   }
 `;
 
-const Options = styled(Stack)`
-  gap: 1rem;
-  > Button:nth-child(2) {
-      margin-left: auto;
-  }
+const Options = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 function OverviewPage() {
   return (
     <Wrapper>
       <Cart />
-      <Options direction="horizontal">
+      <Options>
         <Button href="/">Go Back</Button>
-        <Button href="/checkout">Pay Per Person</Button>
+        <Button href="/checkout">Pay</Button>
       </Options>
     </Wrapper>
   );
